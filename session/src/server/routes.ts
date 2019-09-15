@@ -15,7 +15,7 @@ export default (app: Express.Application) => {
 
   // 画面表示用ルートハンドラー
   app.get("/", (req, res, next) => {
-    if (req.session) {
+    if (req.session && req.session.count !== undefined) {
       const data: { count: number } = { count: req.session.count };
       res.render("index.ejs", data);
     }
@@ -23,13 +23,11 @@ export default (app: Express.Application) => {
 
   // pingボタン押下時のルートハンドラー
   app.get("/ping", (req, res, next) => {
-    if (req.session) {
-      if (req.session.count !== undefined) {
-        req.session.count++;
-        const data: Health = { message: "pong", count: req.session.count };
-        res.send(data);
-        return;
-      }
+    if (req.session && req.session.count !== undefined) {
+      req.session.count++;
+      const data: Health = { message: "pong", count: req.session.count };
+      res.send(data);
+      return;
     }
     next(createError(401));
   });
